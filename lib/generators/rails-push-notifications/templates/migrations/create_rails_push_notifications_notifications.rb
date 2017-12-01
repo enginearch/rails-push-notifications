@@ -9,13 +9,14 @@ class CreateRailsPushNotificationsNotifications < ActiveRecord::Migration
       t.integer :success
       t.integer :failed
       t.boolean :sent, default: false
+      t.boolean :processing, default: false
 
       t.timestamps null: false
     end
 
     add_index(
       :rails_push_notifications_notifications,
-      [:app_id, :app_type, :sent],
+      [:app_id, :app_type, :sent, :processing],
       name: 'app_and_sent_index_on_rails_push_notifications'
     )
   end

@@ -17,13 +17,14 @@ module RailsPushNotifications
     #
     def push_notifications
       pending = find_pending
+      pending.update_all(processing: true) # in case other threads want to do that too
       to_send = pending.map do |notification|
         notification_type.new notification.destinations, notification.data
       end
       pusher = build_pusher
       pusher.push to_send
       pending.each_with_index do |p, i|
-        p.update_attributes! results: to_send[i].results
+        p.update_attributes! results: to_send[i].results, processing: false
       end
     end
 
@@ -33,7 +34,7 @@ module RailsPushNotifications
     # Method that searches the owned notifications for those not yet sent
     #
     def find_pending
-      notifications.where sent: false
+      notifications.where sent: false, processing: false
     end
   end
 end
