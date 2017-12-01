@@ -18,6 +18,7 @@ module RailsPushNotifications
     def push_notifications
       puts "In push notifications"
       pending = find_pending
+      p "pending length: #{pending.length}"
       pending.update_all(processing: true) # in case other threads want to do that too
       to_send = pending.map do |notification|
         notification_type.new notification.destinations, notification.data
